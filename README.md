@@ -33,6 +33,15 @@ npm test           # 引擎层 20 个单测（node --test）
 
 零构建、无依赖、ES Modules。改内容 = 改 `js/data/` 下的数据文件，不用碰逻辑。
 
+## 部署到 GitHub Pages
+
+纯静态站、全部相对路径，两种方式任选：
+
+1. **Actions 自动部署（带单测门禁，推荐）**：`.github/workflows/pages.yml` 已配置——push 到 `master` 自动跑 `npm test`，**单测全绿才部署**；然后在仓库 **Settings → Pages → Source 选择 "GitHub Actions"**。
+2. **分支直部署**：Settings → Pages → Source 选 "Deploy from a branch"（`master` / root）。不走单测门禁，适合临时预览。
+
+部署后访问 `https://<用户名>.github.io/speakmaster/`。注意：学习数据按域名+浏览器隔离，线上与本地进度不互通，可用设置页导出/导入 JSON。
+
 ## 项目结构
 
 ```text
