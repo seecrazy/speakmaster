@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeakMaster · 口语陪练</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="logo">🗣 SpeakMaster <i>口语陪练</i></span>
+      <nav>
+        <button class="nav-btn active" data-page="home">首页</button>
+        <button class="nav-btn" data-page="dialogue">对话训练</button>
+        <button class="nav-btn" data-page="retell">复述训练</button>
+        <button class="nav-btn" data-page="clinic">发音诊所</button>
+        <button class="nav-btn" data-page="skills">技能雷达</button>
+        <button class="nav-btn" data-page="settings">设置</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== 首页 ===== -->
+    <section id="page-home" class="page active">
+      <h1 class="hero">今天，开口说 <b>3</b> 句就算赢</h1>
+      <p class="hero-sub">陪练会实时理解你的水平：你顺，它加难度、抛意外；你卡，它放慢、递提示。</p>
+
+      <div class="dash-grid">
+        <div class="dash-card"><b id="dash-streak">0 天</b><span>连续打卡</span></div>
+        <div class="dash-card"><b id="dash-today">0</b><span>今日练习（次）</span></div>
+        <div class="dash-card"><b id="dash-due">0</b><span>待复习项</span></div>
+        <div class="dash-card"><b id="dash-mastery">0%</b><span>平均掌握度</span></div>
+        <div class="dash-card"><b id="dash-sessions">0</b><span>完成场景</span></div>
+      </div>
+
+      <div class="home-actions">
+        <button class="action-card" data-goto="dialogue"><span class="big">💬</span><b>对话训练</b><span>自由对话 · 导演控难度 · 意外事件</span></button>
+        <button class="action-card" data-goto="retell"><span class="big">🎧</span><b>复述训练</b><span>听一段 · 用自己的话说出来</span></button>
+        <button class="action-card" data-goto="clinic"><span class="big">🩺</span><b>发音诊所</b><span>5 组高频混淆音 · 最小对诊断</span></button>
+      </div>
+    </section>
+
+    <!-- ===== 对话训练 ===== -->
+    <section id="page-dialogue" class="page">
+      <div id="dialogue-picker" class="scenario-grid"></div>
+
+      <div id="dialogue-room" style="display:none;">
+        <div class="room-head">
+          <button class="btn btn-ghost btn-sm" id="room-exit">← 退出</button>
+          <div class="room-title-wrap">
+            <b id="room-title"></b>
+            <span id="room-partner" class="muted"></span>
+          </div>
+          <span class="badge" id="director-badge">难度 Ⅰ</span>
+        </div>
+        <p class="objective" id="beat-objective"></p>
+
+        <div class="chat-log" id="chat-log"></div>
+
+        <div class="notice-row" id="hint-chips"></div>
+
+        <div class="chat-input-row">
+          <button class="mic-button" id="mic-button" title="按住节奏说完一句">🎙</button>
+          <input id="chat-input" placeholder="不方便说话？在这里输入英文回答" autocomplete="off">
+          <button class="btn btn-primary btn-sm" id="chat-input-send">发送</button>
+        </div>
+        <p class="mic-status" id="mic-status"></p>
+
+        <div class="debrief" id="debrief"></div>
+      </div>
+    </section>
+
+    <!-- ===== 复述训练 ===== -->
+    <section id="page-retell" class="page">
+      <div id="retell-picker" class="scenario-grid"></div>
+
+      <div id="retell-stage" style="display:none;">
+        <div class="room-head">
+          <button class="btn btn-ghost btn-sm" id="retell-exit">← 退出</button>
+          <div class="room-title-wrap"><b>复述训练</b></div>
+        </div>
+        <div class="card controls-row">
+          <button class="btn btn-primary" id="retell-play">🔊 再听一遍</button>
+          <button class="btn btn-ghost" id="retell-reveal">👁 查看原文</button>
+        </div>
+        <div class="card retell-text" id="retell-text"></div>
+        <div class="card">
+          <div class="chat-input-row">
+            <button class="mic-button" id="retell-mic">🎙</button>
+            <input id="retell-transcript" placeholder="或在这里输入你的复述" autocomplete="off">
+            <button class="btn btn-primary btn-sm" id="retell-submit">评分</button>
+          </div>
+          <p class="mic-status" id="retell-status"></p>
+        </div>
+        <div class="card" id="retell-result"></div>
+      </div>
+    </section>
+
+    <!-- ===== 发音诊所 ===== -->
+    <section id="page-clinic" class="page">
+      <div id="clinic-picker" class="sound-grid"></div>
+
+      <div id="clinic-stage" style="display:none;">
+        <div class="room-head">
+          <span></span>
+          <div class="room-title-wrap"><b id="sound-title"></b></div>
+          <span></span>
+        </div>
+        <div class="card">
+          <p class="zh" id="sound-explain"></p>
+        </div>
+        <div class="card">
+          <p id="clinic-instruction" class="instruction"></p>
+          <div class="chat-input-row">
+            <button class="mic-button" id="clinic-mic">🎙</button>
+            <input id="clinic-input" placeholder="听不清时可输入听到的词" autocomplete="off">
+            <button class="btn btn-primary btn-sm" id="clinic-check">判定</button>
+          </div>
+          <p class="mic-status" id="clinic-status"></p>
+          <div class="controls-row">
+            <button class="btn btn-ghost btn-sm" id="clinic-next">⏭ 跳过 / 下一步</button>
+          </div>
+        </div>
+        <div class="debrief" id="clinic-summary"></div>
+      </div>
+    </section>
+
+    <!-- ===== 技能雷达 ===== -->
+    <section id="page-skills" class="page">
+      <h2 class="page-title">技能雷达</h2>
+      <p class="hero-sub">"大师" = 把雷达图铺满，而不是刷完章节。每次对话、复述、发音练习都会更新对应技能的掌握度。</p>
+      <div class="card radar-card"><canvas id="radar"></canvas></div>
+      <div id="skill-groups"></div>
+    </section>
+
+    <!-- ===== 设置 ===== -->
+    <section id="page-settings" class="page">
+      <h2 class="page-title">设置</h2>
+
+      <div class="card">
+        <h3>陪练声音</h3>
+        <div class="form-row">
+          <label>声音</label>
+          <select id="tts-voice"></select>
+          <button class="btn btn-ghost btn-sm" id="tts-test">🔊 试听</button>
+        </div>
+        <div class="form-row">
+          <label>语速 <i id="tts-rate-value">1.00x</i></label>
+          <input type="range" id="tts-rate" min="0.6" max="1.5" step="0.05" value="1">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>LLM 台词改写（可选）</h3>
+        <p class="zh">填入任意 OpenAI 兼容接口后，陪练台词会由大模型改写得更自然。状态机、难度调控、评分始终在本地运行；不填则完全离线可用。</p>
+        <div class="form-row"><label>Base URL</label><input id="llm-base" placeholder="https://api.openai.com/v1" autocomplete="off"></div>
+        <div class="form-row"><label>API Key</label><input id="llm-key" type="password" placeholder="sk-..." autocomplete="off"></div>
+        <div class="form-row"><label>Model</label><input id="llm-model" placeholder="gpt-4o-mini" autocomplete="off"></div>
+        <div class="controls-row"><button class="btn btn-primary btn-sm" id="llm-save">保存</button><span class="zh" id="llm-status"></span></div>
+      </div>
+
+      <div class="card">
+        <h3>学习数据</h3>
+        <p class="zh">数据保存在浏览器 localStorage。换设备时先导出、再导入。</p>
+        <div class="controls-row">
+          <button class="btn btn-ghost btn-sm" id="data-export">⬇ 导出 JSON</button>
+          <button class="btn btn-ghost btn-sm" id="data-reset">🗑 重置全部</button>
+        </div>
+        <textarea id="data-json" rows="4" placeholder="导入：把导出的 JSON 粘贴到这里"></textarea>
+        <div class="controls-row"><button class="btn btn-ghost btn-sm" id="data-import">⬆ 导入</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>SpeakMaster v0.1 · 本地优先 · 语音优先 · 导演驱动</footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

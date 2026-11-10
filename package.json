@@ -1,0 +1,10 @@
+{
+  "name": "speakmaster",
+  "version": "0.1.0",
+  "description": "口语陪练——AI 导演驱动的英语口语训练场（本地优先，零构建）",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs 8900",
+    "test": "node --test \"tests/*.test.js\""
+  }
+}
