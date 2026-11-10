@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { updateMastery, masteryLabel, radarData, performanceBySkill, masteryLevel } from "../js/engine/skills.js";
+import { updateMastery, masteryLabel, radarData, performanceBySkill, masteryLevel, overallMastery, rankOf } from "../js/engine/skills.js";
 import { SKILL_DEFS } from "../js/data/skills.js";
 
 test("掌握度：成功按递减增益上升，失败衰减", () => {
@@ -57,4 +57,19 @@ test("radarData 按组平均", () => {
   const trade = radar.find(r => r.group === "生存交易");
   assert.ok(Math.abs(trade.mastery - 0.4666666667) < 1e-6);
   assert.equal(radar.length, new Set(defs.map(d => d.group)).size, "每个功能组都有雷达轴");
+});
+
+test("overallMastery / rankOf：段位计算", () => {
+  const defs = [{ id: "a" }, { id: "b" }];
+  assert.equal(overallMastery({}, defs), 0);
+  assert.equal(overallMastery({ a: { mastery: 1 } }, defs), 0.5);
+  assert.equal(rankOf(0).name, "未开始");
+  assert.equal(rankOf(0.25).name, "新手");
+  assert.equal(rankOf(0.4).name, "学徒");
+  assert.equal(rankOf(0.6).name, "熟练沟通者");
+  assert.equal(rankOf(0.75).name, "进阶表达者");
+  assert.equal(rankOf(0.9).name, "口语大师");
+  // 边界值
+  assert.equal(rankOf(0.85).name, "口语大师");
+  assert.equal(rankOf(0.84).name, "进阶表达者");
 });

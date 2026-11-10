@@ -180,6 +180,21 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 20px 60px; }
 /* ---- 诊所 ---- */
 .instruction { font-size: 1.02rem; margin: 0 0 12px; }
 
+/* ---- 今日任务 / 段位 ---- */
+.plan-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; font-weight: 700; }
+.plan-rank { font-weight: 400; color: var(--muted); font-size: .85rem; }
+.plan-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.plan-chip {
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--ink);
+  border-radius: 999px; padding: 8px 16px; font-size: .9rem; cursor: pointer;
+}
+.plan-chip.main { border-color: var(--accent); color: var(--accent); }
+.plan-chip i { font-style: normal; opacity: .7; font-size: .78rem; margin-left: 4px; }
+.plan-empty { color: var(--muted); font-size: .9rem; }
+.rank-line { margin: 0; font-size: 1.05rem; }
+.rank-line b { color: var(--accent); }
+.rank-sub { display: block; color: var(--muted); font-size: .85rem; margin-top: 4px; }
+
 /* ---- 技能 ---- */
 .radar-card { display: flex; justify-content: center; }
 #radar { width: 100%; max-width: 460px; height: 340px; }

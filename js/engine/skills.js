@@ -42,6 +42,26 @@ export function radarData(skillDefs, skillState) {
   }));
 }
 
+// ---- 大师段位：给"成为口语大师"一个可量化的终点 ----
+export function overallMastery(skillState, skillDefs) {
+  if (!skillDefs || !skillDefs.length) return 0;
+  const sum = skillDefs.reduce((acc, d) => acc + (skillState[d.id] ? skillState[d.id].mastery : 0), 0);
+  return sum / skillDefs.length;
+}
+
+export const RANKS = [
+  { min: 0.85, name: "口语大师", icon: "🏆", desc: "全部技能平均掌握度 ≥85% —— 出师了" },
+  { min: 0.70, name: "进阶表达者", icon: "🎯", desc: "离大师还差一线" },
+  { min: 0.50, name: "熟练沟通者", icon: "💪", desc: "日常场景已能从容应对" },
+  { min: 0.30, name: "学徒", icon: "📖", desc: "基本盘正在成形" },
+  { min: 0.01, name: "新手", icon: "🌱", desc: "万事开头难，开口就是赢" },
+  { min: 0.00, name: "未开始", icon: "🥚", desc: "从一次对话训练开始" }
+];
+
+export function rankOf(mastery) {
+  return RANKS.find(r => mastery >= r.min) || RANKS[RANKS.length - 1];
+}
+
 // 一次对话/练习的成绩单 → 各技能的表现映射
 // beatLogs: [{ beat, score }]，beat.skillId ∈ skillDefs[].id
 export function performanceBySkill(beatLogs) {

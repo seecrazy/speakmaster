@@ -8,6 +8,10 @@ export const SKILL_DEFS = [
   { id: "book-arrange", group: "生活安排", name: "预约与安排", zh: "订票、订座、约时间" },
   { id: "clarify", group: "应变", name: "澄清与确认", zh: "没听懂时请求重复或确认" },
   { id: "narrate", group: "叙述", name: "复述与转述", zh: "把听到的内容用自己的话说出来" },
+  { id: "complain-resolve", group: "应变", name: "投诉与维权", zh: "礼貌而坚定地提出问题、要求解决" },
+  { id: "persuade-negotiate", group: "进阶表达", name: "说服与谈判", zh: "给理由、举例子、回应反驳、达成共识" },
+  { id: "present-ideas", group: "进阶表达", name: "陈述与答疑", zh: "讲清观点、应对提问与澄清" },
+  { id: "socialize-network", group: "社交启动", name: "破冰与人脉", zh: "自我介绍、找共同点、交换联系方式" },
   { id: "th-sound", group: "发音", name: "/θ/ vs /s/", zh: "think↔sink 类最小对" },
   { id: "v-w-sound", group: "发音", name: "/v/ vs /w/", zh: "very↔wary 类最小对" },
   { id: "l-end-sound", group: "发音", name: "词尾 /l/ vs /n/", zh: "call↔con 类尾音" },
@@ -16,7 +20,10 @@ export const SKILL_DEFS = [
   { id: "r-l-sound", group: "发音", name: "/r/ vs /l/", zh: "right↔light 类最小对" },
   { id: "s-sh-sound", group: "发音", name: "/s/ vs /ʃ/", zh: "see↔she 类最小对" },
   { id: "p-b-sound", group: "发音", name: "/p/ vs /b/", zh: "pig↔big 清浊对立" },
-  { id: "h-sound", group: "发音", name: "词首 /h/", zh: "heat↔eat 防丢 h" }
+  { id: "h-sound", group: "发音", name: "词首 /h/", zh: "heat↔eat 防丢 h" },
+  { id: "ei-e-sound", group: "发音", name: "/eɪ/ vs /e/", zh: "late↔let 滑动与稳定" },
+  { id: "er-or-sound", group: "发音", name: "/ɜː/ vs /ɔː/", zh: "work↔walk 圆唇差异" },
+  { id: "s-z-sound", group: "发音", name: "词尾 /s/ vs /z/", zh: "price↔prize 清浊尾音" }
 ];
 
 export const SKILL_BY_ID = Object.fromEntries(SKILL_DEFS.map(d => [d.id, d]));

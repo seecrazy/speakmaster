@@ -19,7 +19,7 @@ test("内容门禁：技能库 id 唯一且分组完整", () => {
 });
 
 test("内容门禁：场景结构完整（槽位引用/技能映射/意外库）", () => {
-  assert.ok(SCENARIOS.length >= 10, "场景数应 ≥10");
+  assert.ok(SCENARIOS.length >= 25, "场景数应 ≥25");
   const seen = new Set();
   for (const s of SCENARIOS) {
     assert.ok(!seen.has(s.id), `场景 id 重复: ${s.id}`);
@@ -66,7 +66,7 @@ test("内容门禁：场景结构完整（槽位引用/技能映射/意外库）
 });
 
 test("内容门禁：复述语料结构完整", () => {
-  assert.ok(RETELL_PASSAGES.length >= 12, "复述语料应 ≥12 段");
+  assert.ok(RETELL_PASSAGES.length >= 30, "复述语料应 ≥30 段");
   const seen = new Set();
   for (const p of RETELL_PASSAGES) {
     assert.ok(!seen.has(p.id), `复述 id 重复: ${p.id}`);
@@ -85,7 +85,7 @@ test("内容门禁：复述语料结构完整", () => {
 });
 
 test("内容门禁：音素库结构完整", () => {
-  assert.ok(PHONEME_SOUNDS.length >= 9, "音素组应 ≥9");
+  assert.ok(PHONEME_SOUNDS.length >= 12, "音素组应 ≥12");
   const seen = new Set();
   for (const s of PHONEME_SOUNDS) {
     assert.ok(!seen.has(s.id), `音素 id 重复: ${s.id}`);

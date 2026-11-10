@@ -1,6 +1,6 @@
-// 技能页：雷达图（canvas 手绘）+ 分组技能条。
+// 技能页：段位认证 + 雷达图（canvas 手绘）+ 分组技能条。
 import { SKILL_DEFS } from "../data/skills.js";
-import { radarData, masteryLabel } from "../engine/skills.js";
+import { radarData, masteryLabel, overallMastery, rankOf } from "../engine/skills.js";
 import * as store from "../store.js";
 
 const $ = (sel) => document.querySelector(sel);
@@ -9,6 +9,13 @@ export function renderSkillsPage() {
   const state = store.get();
   const data = radarData(SKILL_DEFS, state.skills);
   drawRadar($("#radar"), data);
+
+  const ratio = overallMastery(state.skills, SKILL_DEFS);
+  const rank = rankOf(ratio);
+  const masteredCount = SKILL_DEFS.filter(d => state.skills[d.id] && state.skills[d.id].mastery >= 0.85).length;
+  $("#skill-rank").innerHTML =
+    `${rank.icon} <b>${rank.name}</b> · 总掌握度 ${Math.round(ratio * 100)}%（大师线 85%）
+     <span class="rank-sub">${rank.desc} · 已达"掌握"的技能 ${masteredCount}/${SKILL_DEFS.length}</span>`;
 
   const groups = {};
   for (const def of SKILL_DEFS) {

@@ -123,3 +123,38 @@ test("导演：新场景冒烟——寒暄场景首节拍即必答", async () =>
   const t = await d.handleUserInput("morning! such a sunny day");
   assert.equal(t.beatDone, true, "回应天气后应推进");
 });
+
+test("导演：进阶场景冒烟——薪资谈判全流程", async () => {
+  const negotiation = SCENARIOS.find(s => s.id === "negotiation");
+  const d = new Director(negotiation);
+  await d.handleUserInput("thanks dana");
+  let t = await d.handleUserInput("i'm targeting sixty five thousand");
+  assert.equal(t.incident, "frozen", "两轮顺利后应注入预算冻结意外");
+  t = await d.handleUserInput("what size signing bonus are we talking about");
+  assert.equal(t.beatId, "justify");
+  t = await d.handleUserInput("my results delivered thirty percent growth");
+  assert.equal(t.beatId, "flexible");
+  t = await d.handleUserInput("i'm flexible if the total package works");
+  // 意外应答中提到的 "signing bonus" 已填 benefit 槽 → benefit 节拍被跳过，直达收尾
+  assert.equal(t.beatId, "close");
+  assert.equal(d.state.slots.benefit, "bonus");
+  t = await d.handleUserInput("deal, thank you dana");
+  assert.equal(t.done, true);
+});
+
+test("导演：进阶场景冒烟——观点交锋（含立场变强硬意外）", async () => {
+  const debate = SCENARIOS.find(s => s.id === "debate");
+  const d = new Director(debate);
+  await d.handleUserInput("alright let's argue something fun");
+  let t = await d.handleUserInput("i think remote work is here to stay");
+  assert.equal(t.incident, "harden", "站队后应被要求一句话说服");
+  t = await d.handleUserInput("because the data shows productivity is up everywhere");
+  // "because" 已填 reason 槽 → reason 节拍被跳过，直达 example
+  assert.equal(t.beatId, "example");
+  t = await d.handleUserInput("for example my team shipped our biggest project remotely");
+  assert.equal(t.beatId, "counter");
+  t = await d.handleUserInput("however i see your point about lonely juniors");
+  assert.equal(t.beatDone, true);
+  t = await d.handleUserInput("ha deal, same time next week");
+  assert.equal(t.done, true);
+});

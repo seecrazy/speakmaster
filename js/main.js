@@ -6,6 +6,9 @@ import { initClinic, submit as clinicSubmit, restart as clinicRestart, back as c
 import { renderSkillsPage } from "./app/skills-page.js";
 import { initSettings } from "./app/settings-page.js";
 import { dueQueue, summarize } from "./engine/srs.js";
+import { overallMastery, rankOf } from "./engine/skills.js";
+import { SKILL_DEFS } from "./data/skills.js";
+import { SCENARIOS } from "./data/scenarios.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -29,12 +32,40 @@ function renderDashboard() {
   $("#dash-today").textContent = String(store.todayCount());
   const srs = summarize(state.srs);
   $("#dash-due").textContent = String(srs.due);
-  const avg = Object.values(state.skills);
-  const avgMastery = avg.length
-    ? Math.round((avg.reduce((a, b) => a + b.mastery, 0) / avg.length) * 100)
-    : 0;
-  $("#dash-mastery").textContent = avgMastery + "%";
+  const ratio = overallMastery(state.skills, SKILL_DEFS);
+  const rank = rankOf(ratio);
+  $("#dash-mastery").textContent = Math.round(ratio * 100) + "%";
+  $("#dash-rank").textContent = `${rank.icon} ${rank.name}`;
   $("#dash-sessions").textContent = String(state.stats.sessions);
+  renderTodayPlan(ratio, rank);
+}
+
+// 今日任务：到期复习项 + 按掌握度推荐下一个场景
+function renderTodayPlan(ratio, rank) {
+  const state = store.get();
+  const due = dueQueue(state.srs, Date.now(), 30);
+  const dueRetells = due.filter(id => id.startsWith("retell:")).length;
+  const dueSounds = due.filter(id => id.startsWith("sound:")).length;
+
+  const recommended = SCENARIOS.find(s => {
+    const ids = [...new Set(s.beats.map(b => b.skillId))];
+    const avg = ids.reduce((a, id) => a + (state.skills[id] ? state.skills[id].mastery : 0), 0) / ids.length;
+    return avg < 0.6;
+  });
+
+  const items = [];
+  if (recommended) {
+    items.push(`<button class="plan-chip main" onclick="sm.showPage('dialogue')">${recommended.icon} 推荐场景：${recommended.title} <i>${recommended.level}</i></button>`);
+  }
+  if (dueSounds) items.push(`<button class="plan-chip" onclick="sm.showPage('clinic')">🩺 发音复习 ${dueSounds} 项</button>`);
+  if (dueRetells) items.push(`<button class="plan-chip" onclick="sm.showPage('retell')">🎧 复述复习 ${dueRetells} 项</button>`);
+  if (!items.length) {
+    items.push(`<span class="plan-empty">${ratio >= 0.85 ? "🏆 没有到期任务——大师也需要保持手感，随便挑个场景热热身" : "暂无到期任务，开一个新场景继续点亮技能雷达"}</span>`);
+  }
+
+  $("#today-plan").innerHTML =
+    `<div class="plan-head">📋 今日任务 <span class="plan-rank">${rank.icon} 当前段位：${rank.name}（${Math.round(ratio * 100)}% → 大师 85%）</span></div>
+     <div class="plan-chips">${items.join("")}</div>`;
 }
 
 function boot() {

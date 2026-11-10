@@ -100,5 +100,38 @@ export const PHONEME_SOUNDS = [
     targetSide: 1,
     drill: "He held his hat in his hand on the high hill.",
     drillWords: ["He", "held", "his", "hat", "hand", "high", "hill"]
+  },
+  {
+    id: "ei-e",
+    skillId: "ei-e-sound",
+    name: "/eɪ/ vs /e/",
+    ipa: "/eɪ/ vs /e/",
+    explain: "/eɪ/ 是双元音（滑动），/e/ 是单元音（稳定）。late↔let、wait↔wet 混淆会让时态和词义漂移。",
+    minimalPairs: [["late", "let"], ["wait", "wet"], ["gate", "get"], ["taste", "test"]],
+    targetSide: 0,
+    drill: "Kate made Jake wait at the gate to get the wet set.",
+    drillWords: ["Kate", "made", "Jake", "wait", "gate", "get", "wet"]
+  },
+  {
+    id: "er-or",
+    skillId: "er-or-sound",
+    name: "/ɜː/ vs /ɔː/",
+    ipa: "/ɜː/ vs /ɔː/",
+    explain: "/ɜː/ 嘴唇中性微突、舌身平；/ɔː/ 嘴拢圆、开口更大。work↔walk、bird↔board 不分是经典混淆。",
+    minimalPairs: [["work", "walk"], ["bird", "board"], ["shirt", "short"], ["hurt", "heart"]],
+    targetSide: 0,
+    drill: "The girl in the short shirt works near the board.",
+    drillWords: ["girl", "short", "shirt", "works", "board"]
+  },
+  {
+    id: "s-z",
+    skillId: "s-z-sound",
+    name: "清音 /s/ vs 浊音 /z/",
+    ipa: "/s/ vs /z/",
+    explain: "词尾 /s/ 声带不振动、/z/ 振动（手摸喉咙验证）。price↔prize、rice↔rise 影响单复数和动词形式。",
+    minimalPairs: [["price", "prize"], ["rice", "rise"], ["bus", "buzz"], ["place", "plays"]],
+    targetSide: 0,
+    drill: "The price of rice rises as the bees buzz around the place.",
+    drillWords: ["price", "rice", "rises", "buzz", "place"]
   }
 ];

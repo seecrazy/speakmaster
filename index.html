@@ -32,7 +32,12 @@
         <div class="dash-card"><b id="dash-today">0</b><span>今日练习（次）</span></div>
         <div class="dash-card"><b id="dash-due">0</b><span>待复习项</span></div>
         <div class="dash-card"><b id="dash-mastery">0%</b><span>平均掌握度</span></div>
+        <div class="dash-card"><b id="dash-rank">🥚 未开始</b><span>当前段位</span></div>
         <div class="dash-card"><b id="dash-sessions">0</b><span>完成场景</span></div>
+      </div>
+
+      <div class="card" id="today-plan-card">
+        <div id="today-plan"></div>
       </div>
 
       <div class="home-actions">
@@ -131,6 +136,7 @@
     <section id="page-skills" class="page">
       <h2 class="page-title">技能雷达</h2>
       <p class="hero-sub">"大师" = 把雷达图铺满，而不是刷完章节。每次对话、复述、发音练习都会更新对应技能的掌握度。</p>
+      <div class="card rank-card" id="skill-rank-card"><p class="rank-line" id="skill-rank"></p></div>
       <div class="card radar-card"><canvas id="radar"></canvas></div>
       <div id="skill-groups"></div>
     </section>
