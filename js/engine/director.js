@@ -17,6 +17,14 @@ function phraseAcceptance(phrases, transcript) {
   return hit ? Math.min(1, 0.75 + polite * 0.2) : polite * 0.15;
 }
 
+// 台词变体：bot 字段可以是字符串或字符串数组，随机抽取降低重复感
+export function pickLine(bot) {
+  if (Array.isArray(bot)) {
+    return bot[Math.floor(Math.random() * bot.length)];
+  }
+  return bot;
+}
+
 export class Director {
   constructor(scenario, opts = {}) {
     this.scenario = scenario;
@@ -42,7 +50,7 @@ export class Director {
 
   opening() {
     const b = this.beat;
-    return { say: b.bot, beatId: b.id, objective: b.objective, difficulty: this.state.difficulty };
+    return { say: pickLine(b.bot), beatId: b.id, objective: b.objective, difficulty: this.state.difficulty };
   }
 
   // 主入口：用户说完一句，导演决定下一步。
@@ -110,7 +118,7 @@ export class Director {
       const hint = (beat.hints && beat.hints[0]) || "Take your time.";
       say = `${beat.bot} (You can say: "${hint}")`;
     } else {
-      say = beat.bot;
+      say = pickLine(beat.bot);
     }
     return {
       say,
@@ -148,7 +156,7 @@ export class Director {
         beats.splice(this.state.beatIndex, 0, incidentBeat);
         this.scenario = { ...this.scenario, beats };
         return {
-          say: incidentBeat.bot,
+          say: pickLine(incidentBeat.bot),
           botSlow: false,
           incident: incident.id,
           incidentText: incident.zhs || "",
@@ -175,7 +183,7 @@ export class Director {
 
     const next = this.beat;
     return {
-      say: next.bot,
+      say: pickLine(next.bot),
       botSlow: false,
       beatId: next.id,
       objective: next.objective,

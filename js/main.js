@@ -29,7 +29,6 @@ function renderDashboard() {
   $("#dash-today").textContent = String(store.todayCount());
   const srs = summarize(state.srs);
   $("#dash-due").textContent = String(srs.due);
-  const totalSkills = 13;
   const avg = Object.values(state.skills);
   const avgMastery = avg.length
     ? Math.round((avg.reduce((a, b) => a + b.mastery, 0) / avg.length) * 100)

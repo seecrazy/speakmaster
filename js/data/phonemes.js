@@ -56,5 +56,49 @@ export const PHONEME_SOUNDS = [
     targetSide: 0,
     drill: "The sad man said the bad cat kept him awake.",
     drillWords: ["sad", "man", "said", "bad", "cat", "kept"]
+  },
+  {
+    id: "r-l",
+    skillId: "r-l-sound",
+    name: "r vs l",
+    ipa: "/r/ vs /l/",
+    explain: "/r/ 舌尖卷起不触任何地方（圆拢）；/l/ 舌尖抵上齿龈。right↔light、road↔load 混淆普遍。",
+    minimalPairs: [["right", "light"], ["road", "load"], ["correct", "collect"], ["arrive", "alive"]],
+    targetSide: 0,
+    drill: "Rory really likes the red lily by the lake road.",
+    drillWords: ["Rory", "really", "likes", "red", "lily", "lake", "road"]
+  },
+  {
+    id: "s-sh",
+    skillId: "s-sh-sound",
+    name: "s vs sh",
+    ipa: "/s/ vs /ʃ/",
+    explain: "/s/ 舌尖靠近齿龈、气流窄而尖；/ʃ/ 双唇略突、舌面抬、气流宽。see↔she、sip↔ship 要分清。",
+    minimalPairs: [["see", "she"], ["sip", "ship"], ["mass", "mash"], ["seat", "sheet"]],
+    targetSide: 0,
+    drill: "She sees the ship slowly sail south of Spain.",
+    drillWords: ["She", "sees", "ship", "slowly", "sail", "south"]
+  },
+  {
+    id: "p-b",
+    skillId: "p-b-sound",
+    name: "清音 p vs 浊音 b",
+    ipa: "/p/ vs /b/",
+    explain: "/p/ 只送气不发声，/b/ 声带振动。手摸喉咙发 b 会震、发 p 不震。pig↔big、pay↔bay。",
+    minimalPairs: [["pig", "big"], ["pay", "bay"], ["pack", "back"], ["pride", "bride"]],
+    targetSide: 0,
+    drill: "Please put the big purple backpack behind the blue pig.",
+    drillWords: ["Please", "put", "big", "purple", "backpack", "behind", "blue", "pig"]
+  },
+  {
+    id: "h-drop",
+    skillId: "h-sound",
+    name: "词首 h（易丢）",
+    ipa: "/h/ vs ∅",
+    explain: "很多方言把词首 h 丢掉：heat 说成 eat、hair 说成 air。发 /h/ 像哈气，声带不振动、喉咙放松。",
+    minimalPairs: [["eat", "heat"], ["ill", "hill"], ["air", "hair"], ["old", "hold"]],
+    targetSide: 1,
+    drill: "He held his hat in his hand on the high hill.",
+    drillWords: ["He", "held", "his", "hat", "hand", "high", "hill"]
   }
 ];

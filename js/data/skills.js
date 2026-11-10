@@ -12,7 +12,11 @@ export const SKILL_DEFS = [
   { id: "v-w-sound", group: "发音", name: "/v/ vs /w/", zh: "very↔wary 类最小对" },
   { id: "l-end-sound", group: "发音", name: "词尾 /l/ vs /n/", zh: "call↔con 类尾音" },
   { id: "ii-sound", group: "发音", name: "/iː/ vs /ɪ/", zh: "seat↔sit 类长短音" },
-  { id: "ae-e-sound", group: "发音", name: "/æ/ vs /e/", zh: "bad↔bed 类开口度" }
+  { id: "ae-e-sound", group: "发音", name: "/æ/ vs /e/", zh: "bad↔bed 类开口度" },
+  { id: "r-l-sound", group: "发音", name: "/r/ vs /l/", zh: "right↔light 类最小对" },
+  { id: "s-sh-sound", group: "发音", name: "/s/ vs /ʃ/", zh: "see↔she 类最小对" },
+  { id: "p-b-sound", group: "发音", name: "/p/ vs /b/", zh: "pig↔big 清浊对立" },
+  { id: "h-sound", group: "发音", name: "词首 /h/", zh: "heat↔eat 防丢 h" }
 ];
 
 export const SKILL_BY_ID = Object.fromEntries(SKILL_DEFS.map(d => [d.id, d]));

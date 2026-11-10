@@ -81,3 +81,45 @@ test("导演：debrief 汇总轮次/意外/技能日志", async () => {
   assert.ok(t.debrief.turns >= 5);
   assert.equal(t.debrief.peakDifficulty, 3);
 });
+
+test("导演：新场景冒烟——就医问诊全流程（含意外）", async () => {
+  const doctor = SCENARIOS.find(s => s.id === "doctor");
+  const d = new Director(doctor);
+  let t = await d.handleUserInput("good morning doctor");
+  assert.equal(t.beatDone, true);
+  t = await d.handleUserInput("i have a headache and a sore throat");
+  // 前两轮顺利 → 难度 2 → symptom 节拍完成即注入转诊意外
+  assert.equal(t.beatId, "symptom+referral");
+  assert.equal(t.incident, "referral");
+  t = await d.handleUserInput("tomorrow morning works for me");   // 应对转诊
+  assert.equal(t.beatDone, true);
+  assert.equal(t.beatId, "duration");
+  t = await d.handleUserInput("it started three days ago");
+  assert.equal(t.beatId, "allergy");
+  t = await d.handleUserInput("i'm allergic to penicillin");
+  assert.equal(t.beatId, "close");
+  t = await d.handleUserInput("thank you doctor");
+  assert.equal(t.done, true);
+});
+
+test("导演：新场景冒烟——面试（含意外）", async () => {
+  const interview = SCENARIOS.find(s => s.id === "interview");
+  const d = new Director(interview);
+  await d.handleUserInput("hi sarah nice to meet you");
+  let t = await d.handleUserInput("i've been working in marketing for three years");
+  // 两轮顺利 → 难度 2 → intro 完成注入"离职原因"追问
+  assert.equal(t.beatId, "intro+why-leave");
+  // "marketing" 已填 strength 槽、"challenge" 已填 why 槽 → 节拍跳过逻辑直达反问环节
+  t = await d.handleUserInput("honestly i'm ready for a bigger challenge");
+  assert.equal(t.beatId, "close");
+  assert.ok(d.state.slots.strength === "marketing" && d.state.slots.why === "challenge");
+  t = await d.handleUserInput("could you tell me about the team?");
+  assert.equal(t.done, true, "反问后完成");
+});
+
+test("导演：新场景冒烟——寒暄场景首节拍即必答", async () => {
+  const smalltalk = SCENARIOS.find(s => s.id === "smalltalk");
+  const d = new Director(smalltalk);
+  const t = await d.handleUserInput("morning! such a sunny day");
+  assert.equal(t.beatDone, true, "回应天气后应推进");
+});
