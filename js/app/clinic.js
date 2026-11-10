@@ -1,10 +1,12 @@
-// 发音诊所：最小对判别 + 目标句跟读，诊断 5 组高频混淆音。
+// 发音诊所：最小对判别 + 目标句跟读 + 录音级纠音（波形/语速/停顿 + A/B 回放）。
 import { PHONEME_SOUNDS } from "../data/phonemes.js";
 import { normalize, tokenize, scoreShadow } from "../engine/scoring.js";
+import { rmsEnvelope, analyzeSpeech, speechVerdict } from "../engine/audio.js";
 import { schedule, newItem } from "../engine/srs.js";
 import { updateMastery } from "../engine/skills.js";
 import { isAsrSupported, startListening } from "../speech/asr.js";
 import { speak, stopSpeaking } from "../speech/tts.js";
+import { isRecordingSupported, startRecording, stopRecording, decodeRecording, playBlob } from "../speech/recorder.js";
 import * as store from "../store.js";
 
 const getSrsItem = store.getSrsItem;
@@ -14,6 +16,8 @@ let active = null;
 let pairIndex = 0;
 let results = [];   // { pair, heard: "target"|"confused"|"none" }
 let drillDone = null;
+let lastBlob = null;
+let recording = false;
 
 export function initClinic() {
   const list = $("#clinic-picker");
@@ -33,6 +37,126 @@ export function initClinic() {
     if (card) openSound(card.dataset.id);
   });
   $("#clinic-next").onclick = nextStep;
+  $("#clinic-model").onclick = replayModel;
+  $("#clinic-record").onclick = onRecordClick;
+  $("#clinic-playback").onclick = () => playBlob(lastBlob);
+  if (!isRecordingSupported()) {
+    const rec = $("#clinic-record");
+    if (rec) rec.style.display = "none";
+  }
+}
+
+function resetRecordingUI() {
+  lastBlob = null;
+  recording = false;
+  const recBtn = $("#clinic-record");
+  if (!recBtn) return;
+  recBtn.textContent = "⏺ 录音跟读";
+  recBtn.classList.remove("listening");
+  $("#clinic-playback").style.display = "none";
+  $("#clinic-wave").style.display = "none";
+  $("#clinic-metrics").innerHTML = "";
+}
+
+function replayModel() {
+  if (!active) return;
+  const s = store.get().settings;
+  const line = pairIndex < active.minimalPairs.length
+    ? active.minimalPairs[pairIndex][active.targetSide]
+    : active.drill;
+  speak(line, { voiceURI: s.ttsVoice || undefined, rate: 0.9 * (s.ttsRate || 1) });
+}
+
+// 录音流程：第一次点=开始，第二次点=停止并分析。
+// recorder.startRecording() 返回的 promise 在 stop 时 resolve(blob)，这里保存引用。
+let recordingPromise = null;
+
+async function onRecordClick() {
+  if (!active) return;
+  if (!recording) {
+    resetRecordingUI();
+    recordingPromise = startRecording({ maxMs: 8000 });
+    recordingPromise.catch(e => {
+      $("#clinic-status").textContent = e.message === "mic-denied"
+        ? "麦克风权限被拒绝，请在地址栏允许"
+        : "录音启动失败：" + e.message;
+    });
+    recording = true;
+    const btn = $("#clinic-record");
+    btn.textContent = "⏹ 停止录音";
+    btn.classList.add("listening");
+    $("#clinic-status").textContent = "🔴 录音中……念完点停止（最长 8 秒）";
+    return;
+  }
+  recording = false;
+  const btn = $("#clinic-record");
+  btn.textContent = "⏺ 录音跟读";
+  btn.classList.remove("listening");
+  $("#clinic-status").textContent = "⏳ 分析中……";
+  stopRecording();
+  try {
+    const blob = await recordingPromise;
+    lastBlob = blob;
+    await analyzeRecording(blob);
+  } catch (e) {
+    $("#clinic-status").textContent = "录音失败：" + e.message;
+  }
+}
+
+async function analyzeRecording(blob) {
+  const { samples, durationSec } = await decodeRecording(blob);
+  const envelope = rmsEnvelope(samples, 100);
+  const wordCount = pairIndex < active.minimalPairs.length ? 1 : active.drillWords.length;
+  const metrics = analyzeSpeech({ envelope, durationSec, wordCount, windowSec: durationSec / 100 });
+
+  drawWave($("#clinic-wave"), envelope, metrics.pauses);
+  $("#clinic-wave").style.display = "block";
+  $("#clinic-playback").style.display = "";
+  const notes = speechVerdict(metrics);
+  $("#clinic-metrics").innerHTML = `
+    <div class="metric-row"><b>${durationSec.toFixed(1)}s</b><span>时长</span></div>
+    <div class="metric-row"><b>${wordCount === 1 ? "—" : metrics.wpm + " wpm"}</b><span>语速${wordCount === 1 ? "（单词不适用）" : ""}</span></div>
+    <div class="metric-row"><b>${metrics.pauseCount}</b><span>明显停顿</span></div>
+    ${notes.map(n => `<div class="metric-note ${n.level}">${n.level === "ok" ? "✅" : n.level === "warn" ? "⚠️" : "💡"} ${n.text}</div>`).join("")}
+    <div class="metric-note info">🎧 对比听：先点「🔊 再听示范」，再点「▶️ 听我的录音」，差异自己最听得出来。</div>
+  `;
+  $("#clinic-status").textContent = "录音分析完成（听感对比是最有效的纠音手段）";
+}
+
+function drawWave(canvas, envelope, pauses) {
+  const styles = getComputedStyle(document.documentElement);
+  const accent = styles.getPropertyValue("--accent").trim() || "#ff7a59";
+  const border = styles.getPropertyValue("--border").trim() || "#323d4a";
+  const ink = styles.getPropertyValue("--ink").trim() || "#e8edf2";
+  const W = canvas.width = canvas.offsetWidth * 2;
+  const H = canvas.height = 160;
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.fillStyle = "rgba(224,108,108,.12)";
+  for (const p of pauses) {
+    ctx.fillRect((p.start / envelope.length) * W, 0, ((p.end - p.start + 1) / envelope.length) * W, H);
+  }
+
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, H / 2);
+  ctx.lineTo(W, H / 2);
+  ctx.stroke();
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i < envelope.length; i++) {
+    const x = (i / (envelope.length - 1)) * W;
+    const y = H / 2 - (envelope[i] * (H / 2 - 10));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = ink;
+  ctx.font = "20px -apple-system, sans-serif";
+  ctx.fillText("你的声音能量（红色底 = 停顿）", 10, 24);
 }
 
 function openSound(id) {
@@ -49,6 +173,7 @@ function openSound(id) {
 
 function nextStep() {
   stopSpeaking();
+  resetRecordingUI();
   const s = store.get().settings;
   if (pairIndex < active.minimalPairs.length) {
     const pair = active.minimalPairs[pairIndex];

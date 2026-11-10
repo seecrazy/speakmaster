@@ -86,6 +86,6 @@ settings { ttsVoice, ttsRate, llm:{baseUrl,apiKey,model} }
 
 1. 导演 LLM 深度模式（LLM 生成意外与追问，本地状态机校验兜底）
 2. 复述段落与场景的批量内容管线（LLM 生成 + 人工审校）
-3. 真人要素：tandem 匹配、卡关检测 → 建议真人课
-4. 发音：录音回放对比、音素强制对齐（Whisper WASM）
+3. ~~真人要素~~ ✅ v0.4：双人语伴模式（同屏双人提词卡）+ 卡关检测（scaffoldTurns ≥3 → 复盘建议真人破局 + 首页提醒）；在线 tandem 匹配需后端，暂缓
+4. ~~发音~~ ✅ v0.4 部分：录音回放对比 + 能量包络声学指标（语速/停顿/起伏，`engine/audio.js`）；音素级强制对齐（Whisper WASM）仍在路线图
 5. 移动渗透：锁屏一句、3 分钟微课、手表

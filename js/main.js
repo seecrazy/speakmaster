@@ -3,6 +3,7 @@ import * as store from "./store.js";
 import { initDialogue, onMicClick, submitTurn, restart as restartDialogue, leaveRoom } from "./app/dialogue.js";
 import { initRetell } from "./app/retell.js";
 import { initClinic, submit as clinicSubmit, restart as clinicRestart, back as clinicBack } from "./app/clinic.js";
+import { initPartner } from "./app/partner.js";
 import { renderSkillsPage } from "./app/skills-page.js";
 import { initSettings } from "./app/settings-page.js";
 import { dueQueue, summarize } from "./engine/srs.js";
@@ -12,7 +13,7 @@ import { SCENARIOS } from "./data/scenarios.js";
 
 const $ = (sel) => document.querySelector(sel);
 
-const PAGES = ["home", "dialogue", "retell", "clinic", "skills", "settings"];
+const PAGES = ["home", "dialogue", "retell", "clinic", "partner", "skills", "settings"];
 
 function showPage(page) {
   PAGES.forEach(p => {
@@ -54,6 +55,10 @@ function renderTodayPlan(ratio, rank) {
   });
 
   const items = [];
+  const stuck = state.profile.stuck;
+  if (stuck && Date.now() - (stuck.at || 0) < 7 * 86400000) {
+    items.push(`<button class="plan-chip main" onclick="sm.showPage('partner')">🧑‍🤝‍🧑 上次在「${stuck.scenario}」卡关——约同学用语伴模式破局</button>`);
+  }
   if (recommended) {
     items.push(`<button class="plan-chip main" onclick="sm.showPage('dialogue')">${recommended.icon} 推荐场景：${recommended.title} <i>${recommended.level}</i></button>`);
   }
@@ -74,6 +79,7 @@ function boot() {
     initDialogue();
     initRetell();
     initClinic();
+    initPartner();
     initSettings();
 
     document.querySelectorAll(".nav-btn").forEach(btn =>

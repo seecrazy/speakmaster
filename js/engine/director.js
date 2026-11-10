@@ -34,6 +34,7 @@ export class Director {
       difficulty: 1,        // 1..3
       smoothStreak: 0,
       struggleStreak: 0,
+      scaffoldTurns: 0,     // 支架模式下仍卡壳的轮数（卡关检测 → 真人建议）
       scaffolding: false,
       incidentUsed: [],
       slots: {},            // 已收集信息槽（drink/size/...）
@@ -91,6 +92,7 @@ export class Director {
     }
     if (this.state.struggleStreak >= 2) this.state.scaffolding = true;
     else if (score >= 0.6) this.state.scaffolding = false;
+    if (this.state.scaffolding && score < 0.6) this.state.scaffoldTurns++;
 
     // ---- 节拍推进 ----
     const beatDone = this.isBeatComplete(beat, turn);
@@ -213,6 +215,7 @@ export class Director {
       debrief: {
         turns: this.state.turns,
         avgScore: Math.round(avg * 100),
+        scaffoldTurns: this.state.scaffoldTurns,
         incidents: this.state.incidentUsed.length,
         peakDifficulty: this.state.peakDifficulty,
         difficulty: this.state.difficulty,

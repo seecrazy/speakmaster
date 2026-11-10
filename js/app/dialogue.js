@@ -187,6 +187,15 @@ function finishScenario(debrief) {
     const def = SKILL_DEFS.find(d => d.id === id);
     return def ? def.name : id;
   });
+
+  // 卡关检测：支架模式下仍反复卡壳 → 记录并建议真人陪练 / 语伴模式
+  const stuck = (debrief.scaffoldTurns || 0) >= 3;
+  if (stuck) {
+    const st = store.get().profile;
+    st.stuck = { scenario: scenario.title, at: Date.now(), turns: debrief.scaffoldTurns };
+    store.save();
+  }
+
   $("#debrief").innerHTML = `
     <h3>🎉 场景完成：${scenario.title}</h3>
     <div class="debrief-grid">
@@ -196,9 +205,17 @@ function finishScenario(debrief) {
       <div><b>${["Ⅰ", "Ⅱ", "Ⅲ"][debrief.peakDifficulty - 1]}</b><span>难度峰值</span></div>
     </div>
     <p class="zh">本次训练的技能：${skillNames.join("、") || "—"}</p>
+    ${stuck ? `
+      <div class="stuck-card">
+        <b>🧑‍🤝‍🧑 检测到卡关（支架提示下仍卡了 ${debrief.scaffoldTurns} 轮）</b>
+        <p class="zh">AI 陪练能陪你练流利度，但有些卡点需要真人破局：</p>
+        <p class="zh">① 用 <b>👥 语伴模式</b> 找同学面对面练这个场景（App 当提词卡）；② 在外教/口语陪练平台约 25 分钟真人课，把这场的台词发给对方；③ 隔天再来——睡眠巩固后常常突然就会了。</p>
+      </div>
+    ` : ""}
     <div class="controls">
       <button class="btn" onclick="document.querySelector('#dialogue-room').style.display='none';document.querySelector('#dialogue-picker').style.display='grid';">返回场景列表</button>
       <button class="btn btn-ghost" onclick="sm.dialogue.restart()">再来一次</button>
+      ${stuck ? `<button class="btn" onclick="sm.showPage('partner')">👥 去语伴模式</button>` : ""}
     </div>
   `;
   $("#debrief").classList.add("show");

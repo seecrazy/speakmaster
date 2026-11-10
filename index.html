@@ -15,6 +15,7 @@
         <button class="nav-btn" data-page="dialogue">对话训练</button>
         <button class="nav-btn" data-page="retell">复述训练</button>
         <button class="nav-btn" data-page="clinic">发音诊所</button>
+        <button class="nav-btn" data-page="partner">👥 语伴</button>
         <button class="nav-btn" data-page="skills">技能雷达</button>
         <button class="nav-btn" data-page="settings">设置</button>
       </nav>
@@ -126,9 +127,47 @@
           <p class="mic-status" id="clinic-status"></p>
           <div class="controls-row">
             <button class="btn btn-ghost btn-sm" id="clinic-next">⏭ 跳过 / 下一步</button>
+            <button class="btn btn-sm" id="clinic-record" title="录音回放对比：录下自己的跟读，看波形和节奏指标">⏺ 录音跟读</button>
+            <button class="btn btn-ghost btn-sm" id="clinic-playback" style="display:none;">▶️ 听我的录音</button>
+            <button class="btn btn-ghost btn-sm" id="clinic-model">🔊 再听示范</button>
           </div>
+          <canvas id="clinic-wave" class="wave-canvas" style="display:none;"></canvas>
+          <div id="clinic-metrics" class="metrics"></div>
         </div>
         <div class="debrief" id="clinic-summary"></div>
+      </div>
+    </section>
+
+    <!-- ===== 双人语伴 ===== -->
+    <section id="page-partner" class="page">
+      <h2 class="page-title">👥 双人语伴</h2>
+      <p class="hero-sub">找一位同学面对面：B 念 App 上的台词扮演店员/面试官，A 自由口头回应。没有识别没有打分——真人、真对话、真开口。卡住可以看参考表达，随时"加戏"注入意外。</p>
+      <div id="partner-picker" class="scenario-grid"></div>
+
+      <div id="partner-stage" style="display:none;">
+        <div class="room-head">
+          <button class="btn btn-ghost btn-sm" id="partner-exit">← 退出</button>
+          <div class="room-title-wrap"><b id="partner-title"></b><span class="muted" id="partner-partner-name"></span></div>
+          <span class="badge" id="partner-progress"></span>
+        </div>
+        <div class="card partner-line-card">
+          <p class="zh">🎤 B 大声念这句：</p>
+          <p class="partner-line" id="partner-line"></p>
+          <div class="controls-row">
+            <button class="btn btn-ghost btn-sm" id="partner-tts">🔊 听 App 念（示范）</button>
+            <button class="btn btn-ghost btn-sm" id="partner-reveal">💡 看参考表达</button>
+            <button class="btn btn-ghost btn-sm" id="partner-incident" title="随机注入一个意外事件，B 念意外台词，A 现场应对">⚡ 加戏</button>
+          </div>
+          <p class="partner-hint" id="partner-hint" style="display:none;"></p>
+        </div>
+        <div class="card">
+          <p class="zh">🧑 A 听完口头自由回应（说出来就行，不用打字），然后：</p>
+          <div class="controls-row">
+            <button class="btn btn-primary" id="partner-next">下一步 →</button>
+            <button class="btn" id="partner-swap" style="display:none;">🔄 交换角色再来</button>
+          </div>
+          <p class="zh" id="partner-done" style="display:none; margin-top:10px;">交换角色再练一遍：A 念台词、B 自由回应，两个人都练到两侧的表达。</p>
+        </div>
       </div>
     </section>
 
